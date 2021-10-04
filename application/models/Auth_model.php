@@ -45,7 +45,7 @@ class Auth_model extends CI_Model
         );
 
         $this->db->insert("users", $data);
-        $userCreatedId = $rows = $this->db->insert_id();
+        $userCreatedId = $this->db->insert_id();
 
         $user = $this->db->where("id", $userCreatedId)->get("users")->result()[0];
         return $user;
@@ -55,7 +55,7 @@ class Auth_model extends CI_Model
     //return true if phone number exist in database
     private function checkPhoneAlreadyExist($phone)
     {
-        global $users_db;
+        
 
         //return the row of which have same phone no.
         $phoneCountsInDatabase = $this->db->where("phone", $phone)->get("users")->num_rows();
