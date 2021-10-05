@@ -23,6 +23,7 @@ class Book extends CI_Controller
     {
         if (validateHeader($this->input->request_headers())) {
 
+            //uploading image
             $isFileUploaded = $this->upload->do_upload("bookImage");
 
             //if file not uploaded
@@ -48,6 +49,7 @@ class Book extends CI_Controller
                     "district" => $this->input->post("district"),
                 );
 
+                //save data to database
                 $response = $this->Book_model->addBook($bookData);
 
                 if ($response['result']) {
@@ -62,4 +64,52 @@ class Book extends CI_Controller
 
     }
 
+    public function getBooks()
+    {
+        if (validateHeader($this->input->request_headers())) {
+
+            $userId = $this->input->get('user_id');
+
+            $response = $this->Book_model->getBooks($userId);
+
+            if ($response['result']) {
+                sendSuccess($response['data']);
+            } else {
+                sendError($response['message']);
+            }
+
+        }
+    }
+
+    public function deleteBook()
+    {
+        if (validateHeader($this->input->request_headers())) {
+
+            $bookId = $this->input->get("book_id");
+            // if book id is not exist in database
+            if ($this->db->where("id", $bookId)->get("books")->num_rows() == 0) {
+                sendError("Book Not Found");
+            } 
+            
+            // book id exists
+            else {
+                //get image name of that book
+                $imageName = $this->db->where("id", $bookId)->get("books")->result()[0]->bookImage;
+                // delete that image from file
+                $this->Book_model->deleteBookImage($imageName);
+
+                // delete book from database
+                $response = $this->Book_model->deleteBook($bookId);
+
+                if ($response['result']) {
+                    sendSuccessResult($response['message']);
+                } else {
+                    sendError($response['message']);
+                }
+
+            }
+
+        }
+
+    }
 }
