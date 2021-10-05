@@ -82,4 +82,33 @@ class Book_model extends CI_Model
         );
 
     }
+
+    public function getBooksByLocation(
+        $userId,
+        $city,
+        $district,
+        $category) 
+    {
+
+        $bookCondition = array(
+            "userId !=" => $userId, // we don't need user books
+            "district" => $district, // books of specific district
+            //"city" => $city, // books of specific city
+        );
+
+        //if got category in url send books according to category 
+        if ($category != null) {
+            $bookCondition['bookCatagory'] = $category;
+        }
+
+        //get all books form database
+        $data = $this->db->where($bookCondition)->get("books")->result();
+
+        return array(
+            "result" => true,
+            "data" => $data,
+        );
+
+    }
+
 }
