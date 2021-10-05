@@ -89,8 +89,8 @@ class Book extends CI_Controller
             // if book id is not exist in database
             if ($this->db->where("id", $bookId)->get("books")->num_rows() == 0) {
                 sendError("Book Not Found");
-            } 
-            
+            }
+
             // book id exists
             else {
                 //get image name of that book
@@ -107,6 +107,27 @@ class Book extends CI_Controller
                     sendError($response['message']);
                 }
 
+            }
+
+        }
+
+    }
+
+    public function getBooksByLocation()
+    {
+        if (validateHeader($this->input->request_headers())) {
+
+            $response = $this->Book_model->getBooksByLocation(
+                $this->input->post("user_id"),
+                $this->input->post("city"),
+                $this->input->post("district"),
+                $this->input->post("category")
+            );
+
+            if ($response['result']) {
+                sendSuccess($response['data']);
+            } else {
+                sendError($response['message']);
             }
 
         }
